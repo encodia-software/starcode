@@ -3,6 +3,10 @@
 import argparse
 import sys
 import subprocess
+import gzip
+
+def is_gzipped(path):
+    return path.endswith(".gz")
 
 encoding = 'ascii'
 
@@ -78,7 +82,9 @@ sys.stderr.write("parsing sequences ")
 
 # Read input file (single end mode)
 if params.input_file_2 is None:
-   with open(params.input_file_1) as f:
+   open_fn = gzip.open if is_gzipped(params.input_file_1) else open
+   f = open_fn(params.input_file_1)
+   with open_fn(params.input_file_1) as f:
       # Detect file format.
       line = f.readline().rstrip()
       if line[0] == '@':
